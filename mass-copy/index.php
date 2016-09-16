@@ -53,7 +53,7 @@ $files = array_map('basename', glob('files/*.txt'));
 		</div>
 		<div>
 			<div>
-				<input type="radio" name="inputformat" value="file" id="inputformat-file" checked="1"/>
+				<input type="radio" name="inputformat" value="file" id="inputformat-file" checked="checked"/>
 				<label for="inputformat-file">File: </label>
 				<div class="container">
 					<select name="file" id="file">
