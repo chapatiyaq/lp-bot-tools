@@ -2,8 +2,10 @@
 include '../wiki.php';
 $files = array_map('basename', glob('files/*.txt'));
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+	<title>mass-copy</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet" type="text/css" href="../style.css">
 </head>
@@ -14,7 +16,7 @@ $files = array_map('basename', glob('files/*.txt'));
 		<div>
 			<label for="wikifrom">Source wiki: </label>
 			<select name="wikifrom" id="wikifrom">
-				<option value="0"></option>
+				<option value="0" label=" "></option>
 			<?php foreach ($allowedWikis as $wiki) {
 				echo '<option value="' . $wiki . '">' . $wiki . '</option>';
 			} ?>
@@ -23,7 +25,7 @@ $files = array_map('basename', glob('files/*.txt'));
 		<div>
 			<label for="wikito">Destination wiki: </label>
 			<select name="wikito" id="wikito">
-				<option value="0"></option>
+				<option value="0" label=" "></option>
 			<?php foreach ($allowedWikis as $wiki) {
 				echo '<option value="' . $wiki . '">' . $wiki . '</option>';
 			} ?>

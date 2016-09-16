@@ -2,8 +2,10 @@
 include '../wiki.php';
 $files = array_map('basename', glob('files/*.txt'));
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+	<title>upload</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet" type="text/css" href="../style.css">
 </head>
@@ -14,7 +16,7 @@ $files = array_map('basename', glob('files/*.txt'));
 		<div>
 			<label for="wiki">Wiki: </label>
 			<select name="wiki" id="wiki">
-				<option value="0"></option>
+				<option value="0" label=" "></option>
 			<?php foreach ($allowedWikis as $wiki) {
 				echo '<option value="' . $wiki . '">' . $wiki . '</option>';
 			} ?>
@@ -47,7 +49,7 @@ $files = array_map('basename', glob('files/*.txt'));
 		</div>
 		<div>
 			<div>
-				<input type="radio" name="inputformat" value="file" id="inputformat-file" checked="1"/>
+				<input type="radio" name="inputformat" value="file" id="inputformat-file" checked="checked"/>
 				<label for="inputformat-file">File: </label>
 				<div class="container">
 					<select name="file" id="file">
