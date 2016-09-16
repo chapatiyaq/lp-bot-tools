@@ -23,11 +23,11 @@ $files = array_map('basename', glob('files/*.txt'));
 			</select>
 		</div>
 		<div>
-			<label for "login">Login: </label>
+			<label for="login">Login: </label>
 			<input name="login" id="login"/>
 		</div>
 		<div>
-			<label for "password">Password: </label>
+			<label for="password">Password: </label>
 			<input type="password" name="password" id="password"/>
 		</div>
 		<div>

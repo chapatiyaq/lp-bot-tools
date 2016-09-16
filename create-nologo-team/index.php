@@ -22,23 +22,23 @@ include('../wiki.php');
 			</select>
 		</div>
 		<div>
-			<label for "template-name">Team/ </label>
+			<label for="template-name">Team/ </label>
 			<input type="text" name="template-name" id="template-name" value=""/>
 		</div>
 		<div>
-			<label for "team-name">Team name: </label>
+			<label for="team-name">Team name: </label>
 			<input type="text" name="team-name" id="team-name" value=""/>
 		</div>
 		<div>
-			<label for "team-link">Team link (opt.): </label>
+			<label for="team-link">Team link (opt.): </label>
 			<input type="text" name="team-link" id="team-link" value=""/>
 		</div>
 		<div>
-			<label for "login">Login: </label>
+			<label for="login">Login: </label>
 			<input type="text" name="login" id="login"/>
 		</div>
 		<div>
-			<label for "password">Password: </label>
+			<label for="password">Password: </label>
 			<input type="password" name="password" id="password"/>
 		</div>
 		<input type="submit" value="Submit"/>
