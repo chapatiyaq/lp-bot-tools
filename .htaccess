@@ -1,0 +1,4 @@
+<Files "cookies.tmp">
+Order Allow,Deny
+Deny from all
+</Files>

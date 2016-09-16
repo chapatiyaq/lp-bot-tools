@@ -1,0 +1,41 @@
+label {
+	width: 110px;
+	display: inline-block;
+}
+input[type="radio"] + label {
+	width: 85px;
+}
+input[type="text"],
+input[type="password"],
+input[type="number"],
+select {
+	width: 200px;
+}
+.container {
+	position: relative;
+	display: inline-block;
+	vertical-align: top;
+	width: calc(100% - 115px);
+}
+input[type="radio"]:not(:checked) + label + .container:before {
+	position: absolute;
+	z-index: 2;
+	width: 200px;
+	height: 100%;
+	content: " ";
+}
+input[type="radio"]:not(:checked) + label + .container > #file {
+	color: graytext;
+}
+input[type="radio"]:not(:checked) + label + .container > #text {
+	width: 200px;
+	background: rgb(235, 235, 228);
+	height: 25px;
+}
+input[type="radio"]:checked + label + .container > #text {
+	width: 100%;
+	min-height: 300px;
+}
+.info {
+	margin-left: 115px;
+}
