@@ -67,7 +67,7 @@ function sort_parameters_in_simple_template($original_text, $template, $param_li
 	return $modified_text;
 }
 
-$scriptName = 'mass-edit';
+$scriptName = 'mass-replace';
 $myUserAgent = 'Mozilla/5.0 (compatible; ' . $scriptName . '/1.0; chapatiyaq@gmail.com)';
 
 include '../wiki.php';
@@ -240,26 +240,15 @@ if ( count($page_contents) == count($edits) ) {
 			if ($edit['condition'] && is_array($edit['condition'])) {
 				$result = (preg_match($edit['condition'][0], $modified_text) == 1);
 				$expected_result = ($edit['condition'][1] == 'false' ? false : true);
-				if ($result == $expected_result) {
+				$do_replace = ($result == $expected_result);
+				if ($do_replace) {
 					echo 'Condition OK<br/>';
-					if ($edit['replace_type'] == 'STR_REPLACE') {
-						$modified_text = str_replace($edit['search'], str_replace("\\n", "\n", $edit['replace']), $modified_text, $count);
-					} else if ($edit['replace_type'] == 'PREG_REPLACE') {
-						$modified_text = preg_replace($edit['regex_pattern'], str_replace("\\n", "\n", $edit['regex_replacement']), $modified_text, 1, $count);
-					} else if ($edit['replace_type'] == 'STR_REPLACE_THEN_PREG_REPLACE') {
-						$modified_text = str_replace($edit['search'], str_replace("\\n", "\n", $edit['replace']), $modified_text, $count1);
-						$modified_text = preg_replace($edit['regex_pattern'], str_replace("\\n", "\n", $edit['regex_replacement']), $modified_text, 1, $count2);
-						$count = $count1 + $count2;
-					} else if ($edit['replace_type'] == 'SORT_PARAMS_SIMPLE') {
-						$modified_text = sort_parameters_in_simple_template($modified_text, $edit['template'], $edit['param_list'], $count);
-					}
-					if ($count) {
-						$summaries[] = $edit['summary'];
-						$minor &= $edit['minor'];
-					}
 				}
 			} else {
 				echo 'No condition<br>';
+				$do_replace = true;
+			}
+			if ($do_replace) {
 				if ($edit['replace_type'] == 'STR_REPLACE') {
 					$modified_text = str_replace($edit['search'], str_replace("\\n", "\n", $edit['replace']), $modified_text, $count);
 				} else if ($edit['replace_type'] == 'PREG_REPLACE') {
