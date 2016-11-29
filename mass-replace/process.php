@@ -292,7 +292,7 @@ if ( count($page_contents) == count($edits) ) {
 			echo 'Summary: ' . $summary;
 			echo '<div>';
 			echo '<textarea style="width:50%; display:inline-block;" rows="3">' . htmlspecialchars($original_text) . '</textarea>';
-			if (isset($modified_text)) {
+			if ($summary !== "") {
 				echo '<textarea style="width:50%; display:inline-block;" rows="3">' . htmlspecialchars($modified_text) . '</textarea>';
 				echo '</div><div>';
 				echo Diff::toTable(Diff::compare($original_text, $modified_text), '', '');
