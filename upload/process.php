@@ -180,8 +180,6 @@ $pages = $data['query']['pages'];
 
 echo '<ul>';
 foreach ( $pages as $page ) {
-	//echo $page['title'] . ': ' . $page['edittoken'] . '<br/>';
-	//$token = $page['edittoken'];
 	$filename = str_replace('File:', '', $page['title']);
 	
 	echo '<li><b>' . $filename . '</b> ';
