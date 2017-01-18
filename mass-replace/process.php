@@ -251,18 +251,18 @@ if ( count($page_contents) == count($edits) ) {
 			if ($do_replace) {
 				if ($edit['replace_type'] == 'STR_REPLACE') {
 					$modified_text = str_replace($edit['search'], str_replace("\\n", "\n", $edit['replace']), $modified_text, $count);
-					echo $count . ' STR_REPLACE ' . $edit['search'] . ' → ' . $edit['replace'] . '<br>';
+					echo $count . 'x STR_REPLACE ' . $edit['search'] . ' → ' . $edit['replace'] . '<br>';
 				} else if ($edit['replace_type'] == 'PREG_REPLACE') {
 					$modified_text = preg_replace($edit['regex_pattern'], str_replace("\\n", "\n", $edit['regex_replacement']), $modified_text, -1, $count);
-					echo $count . ' PREG_REPLACE ' . $edit['regex_pattern'] . ' → ' . $edit['regex_replacement'] . '<br>';
+					echo $count . 'x PREG_REPLACE ' . $edit['regex_pattern'] . ' → ' . $edit['regex_replacement'] . '<br>';
 				} else if ($edit['replace_type'] == 'STR_REPLACE_THEN_PREG_REPLACE') {
 					$modified_text = str_replace($edit['search'], str_replace("\\n", "\n", $edit['replace']), $modified_text, $count1);
 					$modified_text = preg_replace($edit['regex_pattern'], str_replace("\\n", "\n", $edit['regex_replacement']), $modified_text, -1, $count2);
 					$count = $count1 + $count2;
-					echo $count1 . '+' . $count2 . ' STR_REPLACE_THEN_PREG_REPLACE ' . $edit['search'] . ' → ' . $edit['replace'] . ' then ' . $edit['regex_pattern'] . ' → ' . $edit['regex_replacement'] . '<br>';
+					echo $count1 . 'x + ' . $count2 . 'x STR_REPLACE_THEN_PREG_REPLACE ' . $edit['search'] . ' → ' . $edit['replace'] . ' then ' . $edit['regex_pattern'] . ' → ' . $edit['regex_replacement'] . '<br>';
 				} else if ($edit['replace_type'] == 'SORT_PARAMS_SIMPLE') {
 					$modified_text = sort_parameters_in_simple_template($modified_text, $edit['template'], $edit['param_list'], $count);
-					echo $count . ' SORT_PARAMS_SIMPLE ' . $edit['template'] . ' - ' . $edit['param_list'] . '<br>';
+					echo $count . 'x SORT_PARAMS_SIMPLE ' . $edit['template'] . ' - ' . $edit['param_list'] . '<br>';
 				}
 				if ($count) {
 					$summaries[] = $edit['summary'];
@@ -296,11 +296,10 @@ if ( count($page_contents) == count($edits) ) {
 			echo 'Summary: ' . $summary;
 			echo '<div>';
 			echo '<textarea style="width:50%; display:inline-block;" rows="3">' . htmlspecialchars($original_text) . '</textarea>';
-			if ($summary !== "") {
-				echo '<textarea style="width:50%; display:inline-block;" rows="3">' . htmlspecialchars($modified_text) . '</textarea>';
-				echo '</div><div>';
-				echo Diff::toTable(Diff::compare($original_text, $modified_text), '', '');
-			}
+			echo '<textarea style="width:50%; display:inline-block;" rows="3">' . htmlspecialchars($modified_text) . '</textarea>';
+			echo '</div>';
+			echo '<div>';
+			echo Diff::toTable(Diff::compare($original_text, $modified_text), '', '');
 			echo '</div></div>';
 		}
 		unset($modified_text);
