@@ -1,6 +1,6 @@
 <?php
-// include the Diff class
 require_once './class.Diff.php';
+require_once 'plugins/LastMatchDataParser.php';
 
 function sort_parameters_in_simple_template($original_text, $template, $param_list, &$count) {
 	$parameters = explode('=', $param_list);
@@ -100,10 +100,11 @@ if ($inputformat == 'file') {
 }
 $edits = array();
 foreach ($lines as $line) {
-	list($title, $minor, $summary, $type, $p1, $p2, $p3, $p4) = explode("\t", rtrim($line, "\r\n"), 8);
+	list($title, $minor, $summary, $type, $params) = explode("\t", rtrim($line, "\r\n"), 5);
 	$edit = array();
 	switch($type) {
 	case 'str_replace':
+		list($p1, $p2) = explode("\t", $params, 2);
 		$edit = array(
 			'minor' => (trim($minor) == "minor"),
 			'summary' => trim($summary), 
@@ -112,6 +113,7 @@ foreach ($lines as $line) {
 			'search' => $p1, 'replace' => $p2);
 		break;
 	case 'preg_replace':
+		list($p1, $p2) = explode("\t", $params, 2);
 		$edit = array(
 			'minor' => (trim($minor) == "minor"),
 			'summary' => trim($summary), 
@@ -120,6 +122,7 @@ foreach ($lines as $line) {
 			'regex_pattern' => $p1, 'regex_replacement' => $p2);
 		break;
 	case 'str_replace_then_preg_replace':
+		list($p1, $p2, $p3, $p4) = explode("\t", $params, 4);
 		$edit = array(
 			'minor' => (trim($minor) == "minor"),
 			'summary' => trim($summary), 
@@ -129,6 +132,7 @@ foreach ($lines as $line) {
 			'regex_pattern' => $p3, 'regex_replacement' => $p4);
 		break;
 	case 'preg_replace_w_condition':
+		list($p1, $p2, $p3, $p4) = explode("\t", $params, 4);
 		$edit = array(
 			'minor' => (trim($minor) == "minor"),
 			'summary' => trim($summary), 
@@ -136,12 +140,22 @@ foreach ($lines as $line) {
 			'condition' => array($p1, $p2), 'regex_pattern' => $p3, 'regex_replacement' => $p4);
 		break;
 	case 'sort_parameters_in_simple_template':
+		list($p1, $p2) = explode("\t", $params, 2);
 		$edit = array(
 			'minor' => (trim($minor) == "minor"),
 			'summary' => trim($summary), 
 			'replace_type' => 'SORT_PARAMS_SIMPLE',
 			'condition' => false,
 			'template' => $p1, 'param_list' => $p2);
+		break;
+	case 'last_match_data':
+		$edit = array(
+			'minor' => (trim($minor) == "minor"),
+			'summary' => trim($summary),
+			'replace_type' => 'LAST_MATCH_DATA',
+			'condition' => false,
+			'options' => $params
+		);
 		break;
 	default:
 		echo 'Bad format';
@@ -263,6 +277,21 @@ if ( count($page_contents) == count($edits) ) {
 				} else if ($edit['replace_type'] == 'SORT_PARAMS_SIMPLE') {
 					$modified_text = sort_parameters_in_simple_template($modified_text, $edit['template'], $edit['param_list'], $count);
 					echo $count . 'x SORT_PARAMS_SIMPLE ' . $edit['template'] . ' - ' . $edit['param_list'] . '<br>';
+				} else if ($edit['replace_type'] == 'LAST_MATCH_DATA') {
+					$options = array(
+						'defaultDateIsEndDate' => $edit['options'][0] !== '0',
+						'forceEmptyDateField' => $edit['options'][1] !== '0',
+						'forceNoDateField' => $edit['options'][2] !== '0',
+						'noDateIfEndDate' => $edit['options'][3] !== '0',
+						'matchesBefore3amCountForTheDayBefore' => $edit['options'][4] !== '0',
+						'groupDatesInSlots' => $edit['options'][5] !== '0',
+						'splitSlotsByWdl' => $edit['options'][6] !== '0',
+						'addFourthPlace' => $edit['options'][7] !== '0',
+						'noLastMatchDataIfNoPrize' => $edit['options'][8] !== '0'
+					);
+					$parser = new LastMatchDataParser($page['title'], $modified_text, $options);
+					$modified_text = $parser->execute();
+					echo '1x LAST_MATCH_DATA ' . $edit['options'] . '<br>';
 				}
 				if ($count) {
 					$summaries[] = $edit['summary'];
