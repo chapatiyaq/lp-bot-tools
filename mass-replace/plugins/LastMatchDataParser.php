@@ -67,7 +67,7 @@ class LastMatchDataParser {
             CURLOPT_URL => 'http://wiki.teamliquid.net/' . self::WIKI .'/api.php'
         );
         if (isset($this->proxy))
-            $this->cc['options'][CURLOPT_PROXY] = '172.29.158.2:8080';
+            $this->cc['options'][CURLOPT_PROXY] = $this->proxy;
     }
 
     public function execute() {
