@@ -17,13 +17,13 @@ $allowedWikis = array(
 	'tolueno'
 );
 
-function getWikiData($varName) {
+function getWikiData($varName, $varValue = '') {
 	global $allowedWikis;
 
-	if (isset($_POST[$varName])) {
-		$wiki = $_POST[$varName];
+	if ($varValue || isset($_POST[$varName])) {
+		$wiki = isset($_POST[$varName]) ? $_POST[$varName] : $varValue;
 		if ($wiki && !in_array($wiki, $allowedWikis)) {
-			echo '<p>' . $varName . ' not recognized. Possible values are: ' . implode(', ', $allowedWikis) . '.</p>';
+			echo '<p>' . $wiki . ' not recognized. Possible values are: ' . implode(', ', $allowedWikis) . '.</p>';
 			exit(1);
 		}
 
@@ -45,7 +45,7 @@ function getWikiData($varName) {
 			);
 		}
 	} else {
-		echo '<p>' . $varname . ' not specified</p>';
+		echo '<p>' . $varName . ' not specified</p>';
 		exit(1);
 	}
 }
