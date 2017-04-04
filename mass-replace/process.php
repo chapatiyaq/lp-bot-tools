@@ -100,6 +100,9 @@ if ($inputformat == 'file') {
 }
 $edits = array();
 foreach ($lines as $line) {
+	if ($line[0] == '#') {
+		continue;
+	}
 	list($title, $minor, $summary, $type, $params) = explode("\t", rtrim($line, "\r\n"), 5);
 	$edit = array();
 	switch($type) {
@@ -190,6 +193,7 @@ include '../login.php';
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
@@ -241,7 +245,7 @@ if ( count($page_contents) == count($edits) ) {
 		$token = $page_edit['edittoken'];
 		
 		// DISPLAY TITLE
-		echo $title . ($page['title'] != $title ? ' → ' . $page['title'] : '') . '<br/>';
+		echo '<a href="' . $wikiData['scriptUrl'] . '?title=' . $page['title'] .'">' . $title . ($page['title'] != $title ? ' → ' . $page['title'] : '') . '</a><br/>';
 		// END DISPLAY TITLE
 
 		$original_text = $page['revisions'][0]['*'];
@@ -287,10 +291,13 @@ if ( count($page_contents) == count($edits) ) {
 						'groupDatesInSlots' => $edit['options'][5] !== '0',
 						'splitSlotsByWdl' => $edit['options'][6] !== '0',
 						'addFourthPlace' => $edit['options'][7] !== '0',
-						'noLastMatchDataIfNoPrize' => $edit['options'][8] !== '0'
+						'noLastMatchDataIfNoPrize' => $edit['options'][8] !== '0',
+						'noPrompt' => $edit['options'][9] !== '0'
 					);
 					$parser = new LastMatchDataParser($page['title'], $modified_text, $options);
+					echo '<div class="last-match-data-parser-output">';
 					$modified_text = $parser->execute();
+					echo '</div>';
 					echo '1x LAST_MATCH_DATA ' . $edit['options'] . '<br>';
 				}
 				if ($count) {

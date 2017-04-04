@@ -47,20 +47,31 @@
 	display: none;
 }
 
-.diff td.diffUnmodified span:first-child {
+.diff td.diffUnmodified span:first-child,
+.diff td.diffUnmodified span:nth-child(2) {
 	display: block;
 }
 
-.diff td.diffUnmodified span:first-child:not(:last-child)::after {
+.diff td.diffUnmodified span:nth-child(2):not(:nth-last-child(2))::after {
 	content: '...';
 	display: block;
 	color: blue;
 }
 
-.diff td.diffUnmodified span:last-child {
+.diff td.diffUnmodified span:last-child,
+.diff td.diffUnmodified span:nth-last-child(2) {
 	display: block;
 }
 
 #toStringOutput{
 	margin:0 2em 2em;
+}
+
+.last-match-data-parser-output {
+	white-space: pre;
+	font-family: Consolas;
+	overflow-y: auto;
+	max-height: 50px;
+	background: #222;
+	color: #ddd;
 }
