@@ -10,6 +10,7 @@ class LastMatchDataParser {
     private $splitSlotsByWdl;
     private $addFourthPlace;
     private $noLastMatchDataIfNoPrize;
+    private $noPrompt;
 
     private $title;
     private $originalText;
@@ -36,14 +37,15 @@ class LastMatchDataParser {
     private function parseOptions($options) {
         $this->proxy = isset($options['proxy']) ? $options['proxy'] : false;
         $this->defaultDateIsEndDate = isset($options['defaultDateIsEndDate']) ? $options['defaultDateIsEndDate'] : false;
-        $this->forceEmptyDateField = isset($promptOptions['forceEmptyDateField']) ? $options['forceEmptyDateField'] : false;
-        $this->forceNoDateField = isset($promptOptions['forceNoDateField']) ? $options['forceNoDateField'] : true;
+        $this->forceEmptyDateField = isset($options['forceEmptyDateField']) ? $options['forceEmptyDateField'] : false;
+        $this->forceNoDateField = isset($options['forceNoDateField']) ? $options['forceNoDateField'] : true;
         $this->noDateIfEndDate = isset($options['noDateIfEndDate']) ? $options['noDateIfEndDate'] : true;
         $this->matchesBefore3amCountForTheDayBefore = isset($options['matchesBefore3amCountForTheDayBefore']) ? $options['matchesBefore3amCountForTheDayBefore'] : true;
         $this->groupDatesInSlots = isset($options['groupDatesInSlots']) ? $options['groupDatesInSlots'] : true;
         $this->splitSlotsByWdl = isset($options['splitSlotsByWdl']) ? $options['splitSlotsByWdl'] : false;
         $this->addFourthPlace = isset($options['addFourthPlace']) ? $options['addFourthPlace'] : false;
         $this->noLastMatchDataIfNoPrize = isset($options['noLastMatchDataIfNoPrize']) ? $options['noLastMatchDataIfNoPrize'] : true;
+        $this->noPrompt = isset($options['noPrompt']) ? $options['noPrompt'] : false;
     }
 
     private function setTitle($title) {
@@ -122,7 +124,7 @@ class LastMatchDataParser {
             }
         }
 
-        if (!empty($promptOptions)) {
+        if (!$this->noPrompt && !empty($promptOptions)) {
             foreach ($promptOptions as $i => $option) {
                 echo $i . ": " . $option[1] . "\n";
             }
@@ -254,7 +256,7 @@ class LastMatchDataParser {
                 $originalPptText = $pptMatches[$pptIndex][1];
                 $modifiedPptText = $originalPptText;
                 for ($j = 0; $j < count($entries); ++$j) {
-                    $regExPattern = '#(?s)(\{\{ *(?:Template:)?[Pp]rize[ _]pool[ _]slot([^\n]*)(?:(?!\}\}).)*?(\| *';
+                    $regExPattern = '#(?s)(\{\{ *(?:Template:)?[Pp]rize[ _]pool[ _]slot((?:(?![^!]\}\})[^\n])*)(?:(?![^!]\}\}).)*?(\| *';
                     if ($entries[$j]['player']['page'] !== '')
                     {
                         $rePage = preg_quote($entries[$j]['player']['page']);
@@ -268,7 +270,7 @@ class LastMatchDataParser {
                     if (preg_match($regExPattern, $modifiedPptText, $matches) == 1 &&
                         strpos($matches[3], 'lastvs') === FALSE &&
                         strpos($matches[3], 'wdl') === FALSE &&
-                        !($this->noLastMatchDataIfNoPrize && preg_match("/\| *usdprize *= *0 *[\n\|]/", $matches[2]) == 1) ) {
+                        !($this->noLastMatchDataIfNoPrize && preg_match('/\| *usdprize *= *0 *(\||$)/', $matches[2]) == 1) ) {
                         $pos = $matches[4];
                         $separator = (strpos($matches[3], ' |') !== FALSE) ? ' ' : '';
                         $appendText = $this->makeAppendText($pos, $entries[$j], $hasAnEntryWithNonEmptyDate, $separator);
@@ -331,14 +333,14 @@ class LastMatchDataParser {
                 preg_match('/[^\/]*\.(png|gif)$/', $q1e->textContent, $matches);
                 $fileName = $matches[0];
                 if (preg_match('/^(P|T|Z|R)icon_small\.png$/', $fileName, $matches) == 1) {
-                    $player['race'] = strtolower($matches[1]);
+                    $player['race'] .= strtolower($matches[1]);
                 } else if (preg_match('/^([A-Z][a-z][a-z]?)\.(png|gif)$/', $fileName, $matches) == 1) {
                     $player['flag'] = strtolower($matches[1]);
                 }
             }
         }
         $player['name'] = trim($playerNode->textContent, " \xC2\xA0\r\n");
-        $q1es = $xpath->query('.//a[position()=3]/@title', $playerNode);
+        $q1es = $xpath->query('.//a[last()]/@title', $playerNode);
         if ($q1es !== FALSE && $q1es->length > 0) {
             $page = str_replace(' (page does not exist)', '', $q1es->item(0)->textContent);
             if (self::cleanTitle($page) != self::cleanTitle($player['name'])) {
